@@ -1,0 +1,110 @@
+#include &lt;LiquidCrystal_I2C.h&gt; // LCD 헤더 파일
+                      #include &lt;Keypad.h&gt; // 키패드 헤더 파일
+                      #include &lt;Servo.h&gt; // 서보모터 헤더 파일
+                      
+                      LiquidCrystal_I2C lcd(0x27, 20, 4); // I2C 주소 0x27, 20x4 크기의 LCD 설정
+                      int piezo = 13; // 피에조 부저 핀 번호
+                      int ledred = 12; // LED 핀 번호
+                      int tru = 0; // 올바른 입력 횟수 추적 변수
+                      int count = 0; // 입력된 키의 개수를 추적하는 변수
+                      char pw[4] = {'1', '2', '3', 'A'}; // 비밀번호 설정
+                      const byte ROWS = 4; // 키패드 행 개수
+                      const byte COLS = 4; // 키패드 열 개수
+                      byte rowPins[ROWS] = {10, 9, 8, 6}; // 키패드 행 핀 번호
+                      byte colPins[COLS] = {5, 4, 3, 2}; // 키패드 열 핀 번호
+                      
+                      char keys[ROWS][COLS] = { // 키패드 배열
+                        {'1', '2', '3', 'A'},
+                        {'4', '5', '6', 'B'},
+                        {'7', '8', '9', 'C'},
+                        {'*', '0', '#', 'D'}
+                      };
+                      
+                      Servo myservo; // servo 클래스로 myservo 객체 생성
+                      Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS); // 키패드 설정
+                      
+                      void setup() {
+                        lcd.init(); // LCD 초기화
+                        lcd.noBacklight(); // LCD 백라이트 켜기
+                        myservo.attach(11); // 서보모터 11번 핀으로 선택
+                        myservo.write(180); // 서보모터를 초기 위치로 설정
+                        pinMode(piezo, OUTPUT); // 피에조 부저 핀을 출력으로 설정
+                        pinMode(ledred, OUTPUT); // LED 핀을 출력으로 설정
+                        digitalWrite(ledred, LOW); // LED 초기화
+                      }
+                      
+                      void loop() {
+                        char key = keypad.getKey(); // 키패드 입력받기
+                      
+                        if (key) { // 키가 눌렸을 때
+                          lcd.setCursor(0, 0); // LCD 커서를 첫 번째 줄 첫 번째 칸으로 이동
+                          lcd.print(key); // LCD에 키 값 출력
+                          tone(piezo, 1000, 100); // 1000Hz 주파수로 0.1초 동안 소리
+                          delay(100); // 소리 간 간격
+                      
+                          if (key == pw[count]) { // 입력된 키가 비밀번호의 해당 문자와 일치할 때
+                            tru++;
+                          }
+                          count++;
+                      
+                          if (key == '#') { // 초기화 버튼이 눌렸을 때
+                            re(); // 초기화 함수 호출
+                          }
+                      
+                          if (key == '*'){
+                            lcd.backlight();
+                          }
+                      
+                          if (count == 4) { // 네 자리 모두 입력되었을 때
+                            if (tru == 4) {
+                              Su(); // 비밀번호가 올바르면 성공 함수 호출
+                            } else {
+                              Fa(); // 비밀번호가 틀리면 실패 함수 호출
+                            }
+                            tru = 0;
+                            count = 0; // 입력된 키의 개수 초기화
+                          }
+                        }
+                      }
+                      
+                      void Su() { // 성공했을 시 모터를 돌려주며 성공 메시지 보내기
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        myservo.write(90); // 서보모터를 180도로 회전 (문 열기)
+                        lcd.print("open the door~ lucky"); // 성공 메시지 출력
+                        int melody[] = {659, 784, 880, 988, 1047, 1175, 1319, 1397};
+                        int noteDurations[] = {150, 150, 150, 150, 150, 150, 150, 150};
+                      
+                        for (int thisNote = 0; thisNote &lt; 8; thisNote++) {
+                          int noteDuration = noteDurations[thisNote];
+                          tone(piezo, melody[thisNote], noteDuration);
+                          delay(noteDuration * 1.3);
+                          noTone(piezo);
+                        }
+                        delay(1000);
+                        lcd.clear(); // LCD 화면 지우기
+                      }
+                      
+                      void Fa() { // 실패했을 시 모터를 돌려주며 실패 메시지 보내기
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        lcd.print("wrong"); // 실패 메시지 출력
+                        tone(piezo, 500, 1000); // 500Hz 주파수로 1초 동안 경고음
+                        for (int i = 0; i &lt; 4; i++) { // LED 깜빡이기
+                          digitalWrite(ledred, HIGH);
+                          delay(500);
+                          digitalWrite(ledred, LOW);
+                          delay(500);
+                        }
+                        delay(1000); // 1초 대기
+                        noTone(piezo); // 소리 끄기
+                        lcd.clear(); // LCD 화면 지우기
+                      }
+                      
+                      void re() { // 비밀번호 입력 중 #을 입력하면 입력 중인 비밀번호 초기화
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        lcd.print("password reset"); // 초기화 메시지 출력
+                        myservo.write(180);
+                        delay(1000); // 1초 대기
+                        lcd.clear(); // LCD 화면 지우기
+                        tru = 0;
+                        count = 0; // 입력된 키의 개수 초기화
+                      }
