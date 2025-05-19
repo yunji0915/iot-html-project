@@ -1,6 +1,6 @@
 # EchoVault Lock - 아두이노 + HTML 연동 프로젝트
 
-![메인 이미지](images/yoonz.png)
+
 
 ## 📌 소개
 
