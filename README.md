@@ -24,6 +24,6 @@
 
 ## 🎬 시연 영상
 
-👉 [영상 링크 넣기](https://youtu.be/2ZKKYdpxYrE?si=wDk1Hhi_uz0Tf71C)
+👉 https://youtu.be/2ZKKYdpxYrE?si=wDk1Hhi_uz0Tf71C
 
 
