@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset=utf-8>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Circuit</title>
+        <!-- Load Roboto font -->
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+       
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.cslider.css" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/apple-touch-icon-72.png">
+        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57.png">
+        <link rel="shortcut icon" href="images/ico/favicon.ico">
+
+        <style>
+           
+           
+           header {
+            color: #fff;
+            padding: 10px 0;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        .menu li {
+            margin: 0 10px;
+        }
+      
+        .back, .back2 {
+            align-items: center;
+            padding: 20px;
+            margin: 20px auto;
+        
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .circuitTitle{
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .circuitTitle2{
+          text-align: center;
+          margin-bottom: 20px;
+          font-size: 24px;
+          margin-top: 300px;
+          color: #FECE1A;
+        }
+        .circuitTitle2 h1{
+          color: #FECE1A;
+        }
+        .circuitimg {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #circuitList {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 50px;
+            margin-left: 500px;
+            font-size: 16px;
+        }
+        #circuitList li {
+            margin-bottom: 10px;
+        }
+        .textLine {
+            height: 2px;
+            background-color: #333;
+            margin-bottom: 10px;
+        }
+        .mainCircuit2 {
+            font-size: 14px;
+            line-height: 1.5;
+            overflow: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        pre {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+        
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+        </style>
+    </head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a id="Project" href="index.html"><h1>arduino Project</h1></a>
+            </div>
+        
+        <ul class="menu">
+            <a href="Topic.html"><li>Topic</li></a>
+            <a href="Material.html"><li>Material</li></a>
+            <a href="Circuit.html"><li id="Circuit">Circuit</li></a>
+            <a href="Test.html"><li>Test</li></a>
+        </ul>
+        </div>
+    </header>
+
+    <section class="back">
+        <div class="circuitTitle"><h1>Circuit</h1></div>
+        <div>
+            <div class="mainCircuit">
+                <img class="circuitimg" src="images/keypadcircuit.png" alt="" height="600px">
+                <div>
+                    <div class="textLine"></div>
+                    <ul id="circuitList">
+                        <li>아두이노에 lcd 모니터를 연결한다.</li>
+                        <li>키패드 모듈의 행과 열을 아두이노에 연결</li>
+                        <li>LED 모듈을 브레드보드에 연결한다.</li>
+                        <li>피에조 부저를 브레드보드에 연결한다.</li>
+                        <li>아두이노 컴파일 및 업로드</li>
+                    </ul>
+                    <!-- <h1>사용 부품 및 도구</h1>
+                    <h2>아두이노, 브레드보드, LCD, RGB LED, 배터리, 토양 감지 센서, 릴레이, 워터 모터펌프, 전해 캐패시터</h2> -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="back2">
+        <div class="circuitTitle2"><h1>programming</h1></div>
+        <div>
+            <pre class="mainCircuit2"><code>
+                
+                    #include &lt;LiquidCrystal_I2C.h&gt; // LCD 헤더 파일
+                      #include &lt;Keypad.h&gt; // 키패드 헤더 파일
+                      #include &lt;Servo.h&gt; // 서보모터 헤더 파일
+                      
+                      LiquidCrystal_I2C lcd(0x27, 20, 4); // I2C 주소 0x27, 20x4 크기의 LCD 설정
+                      int piezo = 13; // 피에조 부저 핀 번호
+                      int ledred = 12; // LED 핀 번호
+                      int tru = 0; // 올바른 입력 횟수 추적 변수
+                      int count = 0; // 입력된 키의 개수를 추적하는 변수
+                      char pw[4] = {'1', '2', '3', 'A'}; // 비밀번호 설정
+                      const byte ROWS = 4; // 키패드 행 개수
+                      const byte COLS = 4; // 키패드 열 개수
+                      byte rowPins[ROWS] = {10, 9, 8, 6}; // 키패드 행 핀 번호
+                      byte colPins[COLS] = {5, 4, 3, 2}; // 키패드 열 핀 번호
+                      
+                      char keys[ROWS][COLS] = { // 키패드 배열
+                        {'1', '2', '3', 'A'},
+                        {'4', '5', '6', 'B'},
+                        {'7', '8', '9', 'C'},
+                        {'*', '0', '#', 'D'}
+                      };
+                      
+                      Servo myservo; // servo 클래스로 myservo 객체 생성
+                      Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS); // 키패드 설정
+                      
+                      void setup() {
+                        lcd.init(); // LCD 초기화
+                        lcd.noBacklight(); // LCD 백라이트 켜기
+                        myservo.attach(11); // 서보모터 11번 핀으로 선택
+                        myservo.write(180); // 서보모터를 초기 위치로 설정
+                        pinMode(piezo, OUTPUT); // 피에조 부저 핀을 출력으로 설정
+                        pinMode(ledred, OUTPUT); // LED 핀을 출력으로 설정
+                        digitalWrite(ledred, LOW); // LED 초기화
+                      }
+                      
+                      void loop() {
+                        char key = keypad.getKey(); // 키패드 입력받기
+                      
+                        if (key) { // 키가 눌렸을 때
+                          lcd.setCursor(0, 0); // LCD 커서를 첫 번째 줄 첫 번째 칸으로 이동
+                          lcd.print(key); // LCD에 키 값 출력
+                          tone(piezo, 1000, 100); // 1000Hz 주파수로 0.1초 동안 소리
+                          delay(100); // 소리 간 간격
+                      
+                          if (key == pw[count]) { // 입력된 키가 비밀번호의 해당 문자와 일치할 때
+                            tru++;
+                          }
+                          count++;
+                      
+                          if (key == '#') { // 초기화 버튼이 눌렸을 때
+                            re(); // 초기화 함수 호출
+                          }
+                      
+                          if (key == '*'){
+                            lcd.backlight();
+                          }
+                      
+                          if (count == 4) { // 네 자리 모두 입력되었을 때
+                            if (tru == 4) {
+                              Su(); // 비밀번호가 올바르면 성공 함수 호출
+                            } else {
+                              Fa(); // 비밀번호가 틀리면 실패 함수 호출
+                            }
+                            tru = 0;
+                            count = 0; // 입력된 키의 개수 초기화
+                          }
+                        }
+                      }
+                      
+                      void Su() { // 성공했을 시 모터를 돌려주며 성공 메시지 보내기
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        myservo.write(90); // 서보모터를 180도로 회전 (문 열기)
+                        lcd.print("open the door~ lucky"); // 성공 메시지 출력
+                        int melody[] = {659, 784, 880, 988, 1047, 1175, 1319, 1397};
+                        int noteDurations[] = {150, 150, 150, 150, 150, 150, 150, 150};
+                      
+                        for (int thisNote = 0; thisNote &lt; 8; thisNote++) {
+                          int noteDuration = noteDurations[thisNote];
+                          tone(piezo, melody[thisNote], noteDuration);
+                          delay(noteDuration * 1.3);
+                          noTone(piezo);
+                        }
+                        delay(1000);
+                        lcd.clear(); // LCD 화면 지우기
+                      }
+                      
+                      void Fa() { // 실패했을 시 모터를 돌려주며 실패 메시지 보내기
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        lcd.print("wrong"); // 실패 메시지 출력
+                        tone(piezo, 500, 1000); // 500Hz 주파수로 1초 동안 경고음
+                        for (int i = 0; i &lt; 4; i++) { // LED 깜빡이기
+                          digitalWrite(ledred, HIGH);
+                          delay(500);
+                          digitalWrite(ledred, LOW);
+                          delay(500);
+                        }
+                        delay(1000); // 1초 대기
+                        noTone(piezo); // 소리 끄기
+                        lcd.clear(); // LCD 화면 지우기
+                      }
+                      
+                      void re() { // 비밀번호 입력 중 #을 입력하면 입력 중인 비밀번호 초기화
+                        lcd.setCursor(0, 1); // LCD 커서를 두 번째 줄 첫 번째 칸으로 이동
+                        lcd.print("password reset"); // 초기화 메시지 출력
+                        myservo.write(180);
+                        delay(1000); // 1초 대기
+                        lcd.clear(); // LCD 화면 지우기
+                        tru = 0;
+                        count = 0; // 입력된 키의 개수 초기화
+                      }
+                      
+                    
+            </code></pre>
+        </div>
+    </section>
+</body>
